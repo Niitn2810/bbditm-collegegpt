@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BBDITM – CollegeGPT</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Poppins", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top, #e1f0ff, #f5f5ff);
+        }
+        .chat-wrapper {
+            width: 390px;
+            max-height: 92vh;
+            background: linear-gradient(145deg, #ffffff, #eef2ff);
+            border-radius: 22px;
+            box-shadow: 0 18px 40px rgba(32, 40, 120, 0.35);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.9);
+        }
+        /* HEADER */
+        .chat-header {
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.6);
+            background: linear-gradient(130deg, #0d1b5e, #d50000);
+            color: #fff;
+        }
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #0d1b5e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            border: 2px solid rgba(255,255,255,0.8);
+        }
+        .logo-circle span {
+            line-height: 1;
+        }
+        .header-text h1 {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.1;
+        }
+        .header-text span {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            padding: 9px 14px 5px;
+            border-bottom: 1px solid #dde1ff;
+            background: rgba(255,255,255,0.95);
+        }
+        .tab {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .tab.active {
+            background: #0d1b5e;
+            color: #fff;
+            border-color: #0d1b5e;
+        }
+        .tab:not(.active) {
+            background: #f3f4ff;
+            color: #4a4e7a;
+        }
+
+        /* SUGGESTED QUESTIONS */
+        .suggested-qs {
+            padding: 6px 14px 8px;
+            background: rgba(255,255,255,0.9);
+            border-bottom: 1px solid #dde1ff;
+            max-height: 115px;
+            overflow-y: auto;
+        }
+        .suggested-title {
+            font-size: 11px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #6b6f9b;
+        }
+        .q-chip {
+            font-size: 11px;
+            padding: 6px 8px;
+            margin: 3px 0;
+            border-radius: 10px;
+            background: #f4f6ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        .q-chip span {
+            max-width: 260px;
+        }
+        .q-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(117, 134, 214, 0.25);
+        }
+        .q-chip i {
+            font-style: normal;
+            font-size: 14px;
+        }
+
+        /* CHAT BODY */
+        .chat-body {
+            flex: 1;
+            padding: 12px 14px;
+            overflow-y: auto;
+            background: linear-gradient(180deg, #eef1ff, #ffffff);
+        }
+        .msg-row {
+            margin-bottom: 10px;
+            display: flex;
+        }
+        .msg-row.user { justify-content: flex-end; }
+        .msg-bubble {
+            max-width: 80%;
+            border-radius: 16px;
+            padding: 8px 11px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .msg-row.bot .msg-bubble {
+            background: #ffffff;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(114, 128, 196, 0.25);
+            color: #222a4a;
+        }
+        .msg-row.user .msg-bubble {
+            background: #d50000;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* FOOTER */
+        .chat-footer {
+            padding: 8px 10px 10px;
+            border-top: 1px solid #dde2ff;
+            background: #f8f9ff;
+        }
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            border-radius: 999px;
+            padding: 4px 6px 4px 12px;
+            box-shadow: 0 4px 14px rgba(13, 27, 94, 0.35);
+        }
+        .input-row input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 12px;
+            padding: 7px 4px;
+        }
+        .send-btn {
+            border: none;
+            outline: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: linear-gradient(135deg, #0d1b5e, #d50000);
+            color: #fff;
+            font-size: 16px;
+        }
+        .footer-note {
+            margin-top: 5px;
+            text-align: center;
+            font-size: 9px;
+            color: #9a9ec2;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb {
+            background: #c2c7f3;
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-wrapper">
+    <!-- HEADER -->
+    <div class="chat-header">
+        <div class="logo-circle">
+            <!-- Yahan simple text-logo hai, chaaho to image laga sakte ho -->
+            <!-- <span>BB</span> -->
+             <img src="https://cache.careers360.mobi/media/colleges/social-media/logo/Babu_Banarasi_Das_National_Institute_of_Technology_and_Manage_wEY95io.jpg"
+         style="width:100%; height:100%; border-radius:50%;">
+        </div>
+        <div class="header-text">
+            <h1>BBDITM – CollegeGPT</h1>
+            <span>Ask anything about BBDITM Lucknow</span>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active">All</div>
+        <div class="tab">Admission</div>
+        <div class="tab">Fees</div>
+        <div class="tab">Hostel</div>
+        <div class="tab">Placement</div>
+    </div>
+
+    <!-- SUGGESTED QUESTIONS -->
+    <div class="suggested-qs">
+        <div class="suggested-title">Popular questions</div>
+
+        <div class="q-chip" onclick="fillQuestion('What is the B.Tech CSE fee structure at BBDITM?')">
+            <span>What is the B.Tech CSE fee structure at BBDITM?</span><i>➜</i>
+        </div>
+        <div class="q-chip" onclick="fillQuestion('How can I get admission in BBDITM Lucknow?')">
+            <span>How can I get admission in BBDITM Lucknow?</span><i>➜</i>
+        </div>
+        <div class="q-chip" onclick="fillQuestion('Is hostel facility available for BBDITM students?')">
+            <span>Is hostel facility available for BBDITM students?</span><i>➜</i>
+        </div>
+        <div class="q-chip" onclick="fillQuestion('What are the placements of CSE branch at BBDITM?')">
+            <span>What are the placements of CSE branch at BBDITM?</span><i>➜</i>
+        </div>
+        <div class="q-chip" onclick="fillQuestion('What is the official website and contact of BBDITM?')">
+            <span>What is the official website and contact of BBDITM?</span><i>➜</i>
+        </div>
+    </div>
+
+    <!-- CHAT BODY -->
+    <div class="chat-body" id="chatBody">
+        <div class="msg-row bot">
+            <div class="msg-bubble">
+                👋 Namaste! I am <b>BBDITM – CollegeGPT</b>.<br>
+                You can ask me anything about BBDITM: admission, fees, hostel, placement, facilities, etc.
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="chat-footer">
+        <div class="input-row">
+            <input id="userInput" type="text" placeholder="Write your query about BBDITM here..." autocomplete="off">
+            <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+        <div class="footer-note">
+            Mini Project • Developed by Nitin Chaubey, B.Tech CSE – BBDITM
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatBody = document.getElementById("chatBody");
+    const userInput = document.getElementById("userInput");
+
+    function appendMessage(text, sender = "bot") {
+        const row = document.createElement("div");
+        row.className = "msg-row " + sender;
+
+        const bubble = document.createElement("div");
+        bubble.className = "msg-bubble";
+        bubble.innerText = text;
+
+        row.appendChild(bubble);
+        chatBody.appendChild(row);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        appendMessage(text, "user");
+        userInput.value = "";
+
+        fetch("/get", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text })
+        })
+        .then(res => res.json())
+        .then(data => {
+            appendMessage(data.reply, "bot");
+        })
+        .catch(() => {
+            appendMessage("Error: Could not reach server.", "bot");
+        });
+    }
+
+    userInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            sendMessage();
+        }
+    });
+
+    function fillQuestion(q) {
+        userInput.value = q;
+        userInput.focus();
+    }
+</script>
+
+</body>
+</html>
